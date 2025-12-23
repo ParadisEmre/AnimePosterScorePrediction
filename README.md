@@ -1,21 +1,21 @@
-🎌 Anime Poster Success Prediction (Vision & Hybrid Models)
+# 🎌 Anime Poster Community Score Prediction (Vision & Hybrid Models)
 
-Author: ParadisEmre
+**Author:** [ParadisEmre](https://github.com/ParadisEmre)
 
-This project aims to predict the success score of anime series using their promotional posters and metadata.
+This project aims to predict the community score of anime series using their posters and metadata.
 Two different deep learning approaches are implemented:
 
-🧠 Hybrid Model — Combines metadata + poster images
-
-👁️ Vision-Only Model — Uses only poster images (CNN)
+* **🧠 Hybrid Model:** Combines metadata + poster images.
+* **👁️ Vision-Only Model:** Uses only poster images (CNN).
 
 In addition, the project includes Explainable AI (XAI) techniques using Grad-CAM and Object Detection using YOLO to interpret and visualize model decisions.
 
-📂 Project Structure
+---
 
-Ensure your local directory has the following structure before running the scripts.
+## 📂 Project Structure
+Ensure your local directory has the following structure before running the scripts:
 
-⚠️ Data and trained models are excluded from the repository via .gitignore.
+⚠️ **Note:** Data and trained models are excluded from the repository via .gitignore.
 
 ```text
 ├── AnimeScorePredictionAllParameters/   # Hybrid Model (Metadata + Images)
@@ -30,138 +30,105 @@ Ensure your local directory has the following structure before running the scrip
 ├── data/                                # Created locally
 │   └── images/                          # Downloaded anime posters
 │
+├── .gitignore                           # Excludes heavy files
 └── README.md
 ```
-⚙️ Requirements
 
-Python 3.10
+## ⚙️ Requirements
 
-TensorFlow / Keras — 3.10.x
+* Python v3.10.11
+* TensorFlow v2.10.1 / Keras v2.10.0
+* OpenCV (`cv2`) v4.12.0
+* Ultralytics (YOLO) v8.3.235
+* Pandas v2.3.3
+* NumPy v1.23.5
+* Tqdm v4.67.1
 
-OpenCV (cv2)
-
-Ultralytics (YOLO)
-
-Pandas
-
-NumPy
-
-Tqdm
-
-🔧 Installation
+### 🔧 Installation
 
 It is strongly recommended to use a virtual environment.
 
-pip install tensorflow opencv-python pandas numpy ultralytics tqdm
+```bash
+pip install tensorflow==2.10.1 opencv-python==4.12.0 ultralytics==8.3.235 pandas==2.3.3 numpy==1.23.5 tqdm==4.67.1
+```
 
-🚀 How to Run the Project (Execution Order)
+## 🚀 How to Run the Project (Execution Order)
 
 Follow the steps in order to ensure all dependencies, data, and models are correctly generated.
 
-🔹 STEP 1: Hybrid Model Training (Metadata + Images)
+### 🔹 STEP 1: Hybrid Model Training (Metadata + Images)
+* **Folder:** `AnimeScorePredictionAllParameters`
+* **File:** `animePosterScore.py`
 
-📁 Folder: AnimeScorePredictionAllParameters
+**What this script does:**
+1.  📥 **Downloads** all anime posters into `data/images` (⚠️ **IMPORTANT:** These images are reused by all other models).
+2.  🔗 **Merges** Metadata (`ani_data.json`) and Image data (`ani_img.json`).
+3.  🧪 **Creates** `ani_data_merged.csv` inside the `data/` folder.
+4.  🧠 **Trains** the Hybrid Model and saves it as `anime_hybrid_model.h5`.
 
-📄 File: animePosterScore.py
+```bash
+cd AnimeScorePredictionAllParameters
+python animePosterScore.py
+```
 
-What this script does:
+### 🔹 STEP 2: Vision-Only Model Training (CNN)
+* **Folder:** `AnimeScorePredictionOnlyPoster`
+* **File:** `animePosterScore.py`
 
-📥 Downloads all anime posters into data/images
+**Notes:**
+* ⚠️ Must be run **after STEP 1**.
+* Uses `ani_data_merged.csv` (generated in the previous step).
+* Trains a pure CNN model using only poster images.
+* 📦 **Output:** `anime_vision_only_model.h5` (Required for Grad-CAM and YOLO steps).
 
-⚠️ IMPORTANT:
+```bash
+cd ../AnimeScorePredictionOnlyPoster
+python animePosterScore.py
+```
 
-These images are reused by all other models
+### 🔹 STEP 3: Hybrid Model Weight Comparison
+* **Folder:** `AnimeScorePredictionAllParameters`
+* **File:** `animePosterModelParameterWeightTest.py`
 
-🔗 Merges:
+**Purpose:**
+* Loads `anime_hybrid_model.h5`.
+* Analyzes and compares learned feature weights.
+* Used for model validation and sanity checking.
 
-Metadata (ani_data.json)
+```bash
+cd ../AnimeScorePredictionAllParameters
+python animePosterModelParameterWeightTest.py
+```
 
-Image data (ani_img.json)
+### 🔹 STEP 4: Visualization & Object Detection
 
-🧪 Creates:
+#### 🟠 A) Grad-CAM Visualization (Explainable AI)
+* **Folder:** `AnimeScorePredictionOnlyPoster`
+* **File:** `animePosterAnalysis.py`
 
-ani_data_merged.csv inside the data/ folder
+**Description:**
+* Uses the Vision-Only Model.
+* Generates Grad-CAM heatmaps.
+* Visualizes which regions of the poster influence predictions.
 
-🧠 Trains the Hybrid Model
+```bash
+cd ../AnimeScorePredictionOnlyPoster
+python animePosterAnalysis.py
+```
 
-💾 Saves the model as:
+#### 🟢 B) YOLO Object Detection
+* **Folder:** `AnimeScorePredictionOnlyPoster`
+* **File:** `animePosterScoreObjectDetection.py`
 
-anime_hybrid_model.h5
+**Description:**
+* Detects objects inside anime posters using YOLO.
+* Counts and logs detected objects.
 
-🔹 STEP 2: Vision-Only Model Training (CNN)
+```bash
+python animePosterScoreObjectDetection.py
+```
 
-📁 Folder: AnimeScorePredictionOnlyPoster
+## 📝 Notes
 
-📄 File: animePosterScore.py
-
-Notes:
-
-⚠️ Must be run after STEP 1
-
-Uses ani_data_merged.csv
-
-Trains a pure CNN model using only poster images
-
-This model is required for Grad-CAM and YOLO
-
-📦 Output:
-
-anime_vision_only_model.h5
-
-🔹 STEP 3: Hybrid Model Weight Comparison
-
-📁 Folder: AnimeScorePredictionAllParameters
-
-📄 File:animePosterModelParameterWeightTest.py
-
-Purpose:
-
-Loads anime_hybrid_model.h5
-
-Analyzes and compares learned feature weights
-
-Used for model validation and sanity checking
-
-🔹 STEP 4: Visualization & Object Detection
-
-🟠 Grad-CAM Visualization (Explainable AI)
-
-📁 Folder: AnimeScorePredictionOnlyPoster
-
-📄 File:animePosterAnalysis.py
-
-Uses the Vision-Only Model
-
-Generates Grad-CAM heatmaps
-
-Visualizes which regions of the poster influence predictions
-
-🟢 YOLO Object Detection
-
-📁 Folder: AnimeScorePredictionOnlyPoster
-
-📄 File: animePosterScoreObjectDetection.py
-
-Detects objects inside anime posters using YOLO
-
-Counts and logs detected objects
-
-📌 Optimization Tip:
-
-If object detection results are already saved as:
-
-anime_all_objects_detected.csv
-
-You can comment out the object counting function in the script to save execution time.
-
-📝 Notes
-
-📁 Data & Models
-
-The data/ folder and .h5 model files are not included due to size limitations.
-
-STEP 1 automatically handles all required downloads.
-
-🧪 Environment
-
-Use venv or conda to avoid dependency conflicts.
+* **📁 Data & Models:** The `data/` folder and `.h5` model files are not included in this repository due to size limitations. **STEP 1** automatically handles all required downloads.
+* **🧪 Environment:** It is recommended to use a virtual environment (`venv` or `conda`) to avoid dependency conflicts.
