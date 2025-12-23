@@ -15,7 +15,7 @@ In addition, the project includes Explainable AI (XAI) techniques using Grad-CAM
 
 Ensure your local directory has the following structure before running the scripts.
 ⚠️ Data and trained models are excluded from the repository via .gitignore.
-
+```text
 ├── AnimeScorePredictionAllParameters/   # Hybrid Model (Metadata + Images)
 │   ├── animePosterScore.py
 │   └── animePosterModelParameterWeightTest.py
