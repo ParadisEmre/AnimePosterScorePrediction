@@ -88,7 +88,7 @@ python animePosterScore.py
 
 ### 🔹 STEP 3: Hybrid Model Weight Comparison
 * **Folder:** `AnimeScorePredictionAllParameters`
-* **File:** `animePosterModelParameterWeightTest.py`
+* **File:** `animePosterScoreModelParameterWeightTest.py`
 
 **Purpose:**
 * Loads `anime_hybrid_model.h5`.
