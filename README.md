@@ -20,7 +20,7 @@ Ensure your local directory has the following structure before running the scrip
 ```text
 ├── AnimeScorePredictionAllParameters/   # Hybrid Model (Metadata + Images)
 │   ├── animePosterScore.py
-│   └── animePosterModelParameterWeightTest.py
+│   └── animePosterScoreModelParameterWeightTest.py
 │
 ├── AnimeScorePredictionOnlyPoster/      # Vision-Only Model (CNN)
 │   ├── animePosterScore.py
@@ -97,7 +97,7 @@ python animePosterScore.py
 
 ```bash
 cd ../AnimeScorePredictionAllParameters
-python animePosterModelParameterWeightTest.py
+python animePosterScoreModelParameterWeightTest.py
 ```
 
 ### 🔹 STEP 4: Visualization & Object Detection
