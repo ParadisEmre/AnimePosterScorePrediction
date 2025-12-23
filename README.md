@@ -29,7 +29,7 @@ Ensure your local directory has the following structure before running the scrip
 │   └── images/                          # Downloaded anime posters
 │
 └── README.md
-
+```
 ⚙️ Requirements
 
 Python 3.10
