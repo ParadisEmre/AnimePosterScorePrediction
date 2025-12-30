@@ -13,6 +13,12 @@ MERGED_CSV_PATH = '../data/ani_data_merged.csv'
 DOWNLOADED_IMG_PATH = '../data/images/'
 LAST_CONV_LAYER = 'conv5_block3_out' 
 
+def clean_episodes(ep_str):
+    try:
+        return float(ep_str)
+    except:
+        return np.nan
+
 def make_gradcam_heatmap(img_array, model, last_conv_layer_name):
     # Model
     grad_model = tf.keras.models.Model(
@@ -53,6 +59,23 @@ def analyze_visuals():
     # Data
     data = pd.read_csv(MERGED_CSV_PATH, low_memory=False)
     
+    # Score Clean
+    data.dropna(subset=['score'], inplace=True)
+    data['score'] = pd.to_numeric(data['score'], errors='coerce')
+    data.dropna(subset=['score'], inplace=True)
+    
+    # Genre Clean
+    data.dropna(subset=['genres'], inplace=True)
+
+    # Episodes Clean
+    data['episodes_count'] = data['total_episodes'].apply(clean_episodes)
+    data.dropna(subset=['episodes_count'], inplace=True)
+    
+    # Popularity Clean
+    data['popularity_val'] = pd.to_numeric(data['popularity'], errors='coerce').fillna(0)
+    data.dropna(subset=['popularity_val'], inplace=True)
+    
+    data = data.reset_index(drop=True)
     # Original index is preserved in file_id without the shifts
     data['file_id'] = data.index
     

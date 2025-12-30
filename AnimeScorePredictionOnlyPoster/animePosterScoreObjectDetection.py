@@ -11,6 +11,12 @@ MERGED_CSV_PATH = '../data/ani_data_merged.csv'
 OBJECTS_CSV_PATH = '../data/anime_all_objects_detected.csv'  
 MIN = 20
 
+def clean_episodes(ep_str):
+    try:
+        return float(ep_str)
+    except:
+        return np.nan
+
 def detect_objects_with_yolo():
     
 
@@ -18,9 +24,24 @@ def detect_objects_with_yolo():
     # Make sure
     data = df.copy()
 
-    # File Id add if not
-    if 'file_id' not in data.columns:
-        data['file_id'] = data.index
+    # Score Clean
+    data.dropna(subset=['score'], inplace=True)
+    data['score'] = pd.to_numeric(data['score'], errors='coerce')
+    data.dropna(subset=['score'], inplace=True)
+    
+    # Genre Clean
+    data.dropna(subset=['genres'], inplace=True)
+
+    # Episodes Clean
+    data['episodes_count'] = data['total_episodes'].apply(clean_episodes)
+    data.dropna(subset=['episodes_count'], inplace=True)
+    
+    # Popularity Clean
+    data['popularity_val'] = pd.to_numeric(data['popularity'], errors='coerce').fillna(0)
+    data.dropna(subset=['popularity_val'], inplace=True)
+    
+    data = data.reset_index(drop=True)
+    data['file_id'] = data.index
 
     # Filter the ones with no image
     if os.path.exists(IMG_DIR):
@@ -75,9 +96,20 @@ def analyze_object_impact():
     df_main['score'] = pd.to_numeric(df_main['score'], errors='coerce')
     df_main = df_main.dropna(subset=['score'])
     
-    # File ID check
-    if 'file_id' not in df_main.columns:
-        df_main['file_id'] = df_main.index
+    # Genre Clean (BUNU EKLEDİK)
+    df_main.dropna(subset=['genres'], inplace=True)
+
+    # Episodes Clean (BUNU EKLEDİK)
+    df_main['episodes_count'] = df_main['total_episodes'].apply(clean_episodes)
+    df_main.dropna(subset=['episodes_count'], inplace=True)
+    
+    # Popularity Clean (BUNU EKLEDİK)
+    df_main['popularity_val'] = pd.to_numeric(df_main['popularity'], errors='coerce').fillna(0)
+    df_main.dropna(subset=['popularity_val'], inplace=True)
+    
+    #ID Reset
+    df_main = df_main.reset_index(drop=True)
+    df_main['file_id'] = df_main.index
     
     # Merge
     df = pd.merge(df_main[['file_id', 'score', 'name']], df_obj, on='file_id', how='inner')

@@ -238,9 +238,7 @@ if __name__ == "__main__":
     # To make sure
     data = merged_data.copy()
     
-    # Original index is preserved in file_id without the shifts
-    data['file_id'] = data.index
-    
+
     # Data clean up (JSON Data Check)
     data.dropna(subset=['score'], inplace=True)
     data['score'] = pd.to_numeric(data['score'], errors='coerce')
@@ -285,12 +283,13 @@ if __name__ == "__main__":
     
     # Reset index
     anime_data = data.reset_index(drop=True)
-
+    anime_data['file_id'] = anime_data.index 
+    
     print("\nDownload Image")
     download_all_images(anime_data, DOWNLOADED_IMG_PATH)
     # print("\nImages Downloaded Already")
 
-        # Data clean up (Image Data Check)
+    # Data clean up (Image Data Check)
     print("Check Images")
     
     if os.path.exists(DOWNLOADED_IMG_PATH):
@@ -301,6 +300,7 @@ if __name__ == "__main__":
     print("Check Images Done")
     # Check can not catch up
     time.sleep(3)    
+    
 
     # Train validation
     train_data = anime_data.sample(frac=0.8, random_state=42)

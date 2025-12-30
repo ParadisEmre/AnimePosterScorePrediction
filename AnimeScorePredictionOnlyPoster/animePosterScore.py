@@ -121,6 +121,12 @@ def build_vision_model():
     return model
 
 
+def clean_episodes(ep_str):
+    try:
+        return float(ep_str)
+    except:
+        return np.nan
+
 if __name__ == "__main__":
     
     # Data already loaded
@@ -128,6 +134,26 @@ if __name__ == "__main__":
     
     # To make sure
     data = df.copy()
+    
+    print("Applying exact cleaning steps to match file IDs...")
+    
+    # Score Clean
+    data.dropna(subset=['score'], inplace=True)
+    data['score'] = pd.to_numeric(data['score'], errors='coerce')
+    data.dropna(subset=['score'], inplace=True)
+    
+    # Genre Clean 
+    data.dropna(subset=['genres'], inplace=True)
+
+    # Episodes Clean
+    data['episodes_count'] = data['total_episodes'].apply(clean_episodes)
+    data.dropna(subset=['episodes_count'], inplace=True)
+    
+    # Popularity Clean
+    data['popularity_val'] = pd.to_numeric(data['popularity'], errors='coerce').fillna(0)
+    data.dropna(subset=['popularity_val'], inplace=True)
+    
+    data = data.reset_index(drop=True)
     
     # To protect indexes after shuffle
     data['file_id'] = data.index
@@ -143,12 +169,6 @@ if __name__ == "__main__":
     print("Check Images Done")
     # Check can not catch up
     time.sleep(3)    
-    
-    # Delete empty scores and convert them to numbers
-    data.dropna(subset=['score'], inplace=True)
-    data['score'] = pd.to_numeric(data['score'], errors='coerce')
-    # Some are broken after conversion so drop
-    data.dropna(subset=['score'], inplace=True)
     
     # Reset index
     anime_data = data.reset_index(drop=True)
