@@ -241,18 +241,6 @@ if __name__ == "__main__":
     # Original index is preserved in file_id without the shifts
     data['file_id'] = data.index
     
-    # Data clean up (Image Data Check)
-    print("Check Images")
-    
-    if os.path.exists(DOWNLOADED_IMG_PATH):
-        existing_files = set(os.listdir(DOWNLOADED_IMG_PATH))
-        # Keep only image consisting image
-        data = data[data['file_id'].apply(lambda x: f"{x}.jpg" in existing_files)].copy()
-        print(f"Cleaned data count --> {len(data)}")
-    print("Check Images Done")
-    # Check can not catch up
-    time.sleep(3)    
-    
     # Data clean up (JSON Data Check)
     data.dropna(subset=['score'], inplace=True)
     data['score'] = pd.to_numeric(data['score'], errors='coerce')
@@ -299,8 +287,20 @@ if __name__ == "__main__":
     anime_data = data.reset_index(drop=True)
 
     print("\nDownload Image")
-    # download_all_images already done
-    print("\nImages Downloaded Already")
+    download_all_images(anime_data, DOWNLOADED_IMG_PATH)
+    # print("\nImages Downloaded Already")
+
+        # Data clean up (Image Data Check)
+    print("Check Images")
+    
+    if os.path.exists(DOWNLOADED_IMG_PATH):
+        existing_files = set(os.listdir(DOWNLOADED_IMG_PATH))
+        # Keep only image consisting image
+        anime_data = anime_data[anime_data['file_id'].apply(lambda x: f"{x}.jpg" in existing_files)].copy()
+        print(f"Cleaned data count --> {len(anime_data)}")
+    print("Check Images Done")
+    # Check can not catch up
+    time.sleep(3)    
 
     # Train validation
     train_data = anime_data.sample(frac=0.8, random_state=42)
